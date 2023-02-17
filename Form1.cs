@@ -28,7 +28,7 @@
 //      of the project source code;
 // </copyright>
 
-namespace AVPlus.ToolboxLogParser
+namespace CI.CSharp.CrestronLogParser
 {
     using System;
     using System.Collections.Generic;
@@ -44,8 +44,8 @@ namespace AVPlus.ToolboxLogParser
         private string str;
         private string[] rows;
         private FileDialog ofd = new OpenFileDialog();
-        private List<CrestronDebuggerLine> lines = new List<CrestronDebuggerLine>();
-        private List<string> sigs = new List<string>();
+        private List<LogLine> lines = new List<LogLine>();
+        private List<string> entries = new List<string>();
         private int prevWidth;
         private int prevHeight;
 
@@ -56,24 +56,29 @@ namespace AVPlus.ToolboxLogParser
             prevHeight = this.Height;
             cbTime.Checked = false;
             cbDate.Checked = false;
-            cbSigName.Checked = true;
+            cbFileName.Checked = true;
         }
 
         private void printFile()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (CrestronDebuggerLine l in lines)
+            foreach (LogLine l in lines)
             {
-                if (checkedListBox1.GetItemCheckState(checkedListBox1.Items.IndexOf(l.Name)) == CheckState.Checked)
+                if (checkedListBox1.GetItemCheckState(checkedListBox1.Items.IndexOf(l.Category)) == CheckState.Checked
+                    && l.Data.Contains(tbFilter.Text))
                 {
-                    if (cbTime.Checked)
-                        sb.Append(l.Time + " - ");
                     if (cbDate.Checked)
-                        sb.Append(l.Date);
+                        sb.Append(l.Date + " "); // "2023:02:01"
+                    if (cbTime.Checked && cbDate.Checked)
+                        sb.Append(" ");
+                    if (cbTime.Checked)
+                        sb.Append(l.Time); // "12:00:00"
                     if (cbTime.Checked || cbDate.Checked)
                         sb.Append(": ");
-                    if (cbSigName.Checked)
-                        sb.Append(l.Name + " -> ");
+                    if (true)
+                        sb.Append(l.Category + ": ");
+                    if (cbFileName.Checked)
+                        sb.Append(l.File + " -> ");
                     sb.Append(l.Data + "\n");
                 }
             }
@@ -93,19 +98,19 @@ namespace AVPlus.ToolboxLogParser
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    Match m = Regex.Match(line, "(.*) - (.*): (.*) -> (.*)"); //"12:55:25 - 01-16-2015: MCU-01_Fusion_tx$ -> "
-                    if (m.Groups[3].Value.Length > 0)
+                    Match m = Regex.Match(line, @"(\w+): (.+) # (\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})  # (.+)"); //"Info: CrestronMonitor.exe # 2023-02-13 17:11:42  # Crestron applications already installed"
+                    if (m.Length > 1)
                     {
-                        lines.Add(new CrestronDebuggerLine(m.Groups[1].Value, m.Groups[2].Value, m.Groups[3].Value, m.Groups[4].Value));
-                        if (!sigs.Contains(m.Groups[3].Value))
+                        lines.Add(new LogLine(m.Groups[1].Value, m.Groups[2].Value, m.Groups[3].Value, m.Groups[4].Value, m.Groups[5].Value));
+                        if (!entries.Contains(m.Groups[1].Value))
                         {
-                            sigs.Add(m.Groups[3].Value);
-                            checkedListBox1.Items.Add(m.Groups[3].Value, true);
+                            entries.Add(m.Groups[1].Value);
+                            checkedListBox1.Items.Add(m.Groups[1].Value, true);
                         }
                     }
                 }
             }
-            lines.Sort();
+            //lines.Sort();
             printFile();
         }
 
@@ -143,13 +148,11 @@ namespace AVPlus.ToolboxLogParser
             richTextBox1.SetBounds(richTextBox1.Location.X, richTextBox1.Location.Y, richTextBox1.Width + incWidth, richTextBox1.Height + incHeight);
             ResizeControl(checkedListBox1, incHeight, incWidth);
             ResizeControl(tbFilter, incHeight, incWidth);
-            ResizeControl(cbSigName, incHeight);
+            ResizeControl(cbFileName, incHeight);
             ResizeControl(cbTime, incHeight);
             ResizeControl(cbDate, incHeight);
             ResizeControl(btnSelectAll, incHeight);
             ResizeControl(btnClearAll, incHeight);
-            ResizeControl(btnFilterShow, incHeight);
-            ResizeControl(btnFilterHide, incHeight);
             ResizeControl(label1, incHeight);
             ResizeControl(label2, incHeight);
             prevWidth = this.Width;
@@ -208,42 +211,75 @@ namespace AVPlus.ToolboxLogParser
 
         private void btnFilterShow_Click(object sender, EventArgs e)
         {
+            /*
              //Regex pattern = new Regex(".*" + + ".*");
              //bool isMatch = pattern.IsMatch("battle");
 
-
             for (int i = 0; i < checkedListBox1.Items.Count; i++)
             {
-                Match m = Regex.Match(sigs[i], tbFilter.Text);
+                Match m = Regex.Match(entries[i], tbFilter.Text);
                 //if()
                 checkedListBox1.SetItemChecked(i, false);
             }
+            */
             printFile();
         }
 
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tbFilter_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tbFilter_Enter(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void tbFilter_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                printFile();
+            }
+        }
+
     }
-    public class CrestronDebuggerLine : IEquatable<CrestronDebuggerLine>, IComparable<CrestronDebuggerLine>
+    public class LogLine //: IEquatable<LogLine>, IComparable<LogLine>
     {
-        public string Name { get; set; }
+        public string Category { get; set; }
+        public string File { get; set; }
         public string Date { get; set; }
         public string Time { get; set; }
         public string Data { get; set; }
 
-        public CrestronDebuggerLine(string Time, string Date, string Name, string Data)
+        public LogLine(string Category, string File, string Date, string Time, string Data)
+            //"Info: CrestronMonitor.exe # 2023-02-13 17:11:42  # Crestron applications already installed"
         {
-            this.Name = Name;
+            this.Category = Category;
+            this.File = File;
             this.Date = Date;
             this.Time = Time;
             this.Data = Data;
         }
         public override string ToString()
         {
-            return String.Format("{0} - {1}: {2} -> {3}", Time, Date, Name, Data); //"12:55:25 - 01-16-2015: MCU-01_Fusion_tx$ -> "
+            return String.Format("{0} {1}: {2} # {3} # {4}", Date, Time, Category, File, Data); 
+            //"2023-02-13 17:11:42: Info # CrestronMonitor.exe # Crestron applications already installed"
         }
         public override bool Equals(object obj)
         {
             if (obj == null) return false;
-            CrestronDebuggerLine objAsLine = obj as CrestronDebuggerLine;
+            LogLine objAsLine = obj as LogLine;
             if (objAsLine == null) return false;
             else return Equals(objAsLine);
         }
@@ -251,7 +287,8 @@ namespace AVPlus.ToolboxLogParser
         {
             return name1.CompareTo(name2);
         }
-        public int CompareTo(CrestronDebuggerLine compareLine)
+        /*
+        public int CompareTo(LogLine compareLine)
         {
             if (compareLine == null)
                 return 1;
@@ -263,12 +300,13 @@ namespace AVPlus.ToolboxLogParser
         //{
         //    return 0;
         //}
-        public bool Equals(CrestronDebuggerLine other)
+        public bool Equals(LogLine other)
         {
             if (other == null) return false;
             return (this.Name.Equals(other.Name));
         }
         // Should also override == and != operators.
+         * */
     }
 
 }

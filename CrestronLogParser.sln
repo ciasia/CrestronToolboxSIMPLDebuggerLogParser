@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolboxLogParser", "ToolboxLogParser.csproj", "{614B38D9-CA57-4F02-AC3A-9E6DE395E889}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrestronLogParser", "CrestronLogParser.csproj", "{614B38D9-CA57-4F02-AC3A-9E6DE395E889}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

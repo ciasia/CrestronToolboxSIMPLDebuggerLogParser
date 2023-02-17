@@ -1,4 +1,19 @@
-﻿namespace AVPlus.ToolboxLogParser
+﻿// License info and recommendations
+//-----------------------------------------------------------------------
+// <copyright file="Form1.Designer.cs" company="Corporate Initiatives Group Asia Pty Ltd">
+//     http://www.thecigroup.com.au
+//     All source code excluding third party packages remains the sole property of Corporate Initiatives Group Asia Pty Ltd.
+//     Source code may not be implemented, extended, modified, copied, re-distributed or deployed
+//     without the express written consent of an authorised employee of Corporate Initiatives Group Asia Pty Ltd.
+//     For more details please refer to the LICENSE file located in the root folder of the project source code.
+//     20230215 Rod Driscoll
+//     e: rodney.driscoll@thecigroup.com.au
+//     m: +61 2 9223 3955
+//     {c} Licensed to orporate Initiatives Group Asia Pty Ltd 2023.
+// </copyright>
+//-----------------------------------------------------------------------
+
+namespace CI.CSharp.CrestronLogParser
 {
     partial class Form1
     {
@@ -34,15 +49,13 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cbDate = new System.Windows.Forms.CheckBox();
             this.cbTime = new System.Windows.Forms.CheckBox();
-            this.cbSigName = new System.Windows.Forms.CheckBox();
+            this.cbFileName = new System.Windows.Forms.CheckBox();
             this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
             this.btnSelectAll = new System.Windows.Forms.Button();
             this.btnClearAll = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tbFilter = new System.Windows.Forms.TextBox();
-            this.btnFilterShow = new System.Windows.Forms.Button();
-            this.btnFilterHide = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -101,16 +114,16 @@
             this.cbTime.UseVisualStyleBackColor = true;
             this.cbTime.CheckedChanged += new System.EventHandler(this.cbTime_CheckedChanged);
             // 
-            // cbSigName
+            // cbFileName
             // 
-            this.cbSigName.AutoSize = true;
-            this.cbSigName.Location = new System.Drawing.Point(12, 272);
-            this.cbSigName.Name = "cbSigName";
-            this.cbSigName.Size = new System.Drawing.Size(98, 17);
-            this.cbSigName.TabIndex = 8;
-            this.cbSigName.Text = "Show sig name";
-            this.cbSigName.UseVisualStyleBackColor = true;
-            this.cbSigName.CheckedChanged += new System.EventHandler(this.cbSigName_CheckedChanged);
+            this.cbFileName.AutoSize = true;
+            this.cbFileName.Location = new System.Drawing.Point(12, 272);
+            this.cbFileName.Name = "cbFileName";
+            this.cbFileName.Size = new System.Drawing.Size(95, 17);
+            this.cbFileName.TabIndex = 8;
+            this.cbFileName.Text = "Show filename";
+            this.cbFileName.UseVisualStyleBackColor = true;
+            this.cbFileName.CheckedChanged += new System.EventHandler(this.cbSigName_CheckedChanged);
             // 
             // checkedListBox1
             // 
@@ -123,7 +136,7 @@
             // 
             // btnSelectAll
             // 
-            this.btnSelectAll.Location = new System.Drawing.Point(12, 295);
+            this.btnSelectAll.Location = new System.Drawing.Point(12, 321);
             this.btnSelectAll.Name = "btnSelectAll";
             this.btnSelectAll.Size = new System.Drawing.Size(89, 23);
             this.btnSelectAll.TabIndex = 10;
@@ -133,7 +146,7 @@
             // 
             // btnClearAll
             // 
-            this.btnClearAll.Location = new System.Drawing.Point(12, 324);
+            this.btnClearAll.Location = new System.Drawing.Point(12, 350);
             this.btnClearAll.Name = "btnClearAll";
             this.btnClearAll.Size = new System.Drawing.Size(89, 23);
             this.btnClearAll.TabIndex = 11;
@@ -153,11 +166,12 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(24, 379);
+            this.label2.Location = new System.Drawing.Point(10, 376);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(254, 13);
+            this.label2.Size = new System.Drawing.Size(281, 13);
             this.label2.TabIndex = 13;
-            this.label2.Text = "Type a filter to show or hide signals (e.g. Projector_*)";
+            this.label2.Text = "Type a filter to show / hide lines (e.g. USER SPECIFIED: )";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // tbFilter
             // 
@@ -165,40 +179,22 @@
             this.tbFilter.Name = "tbFilter";
             this.tbFilter.Size = new System.Drawing.Size(279, 20);
             this.tbFilter.TabIndex = 14;
-            // 
-            // btnFilterShow
-            // 
-            this.btnFilterShow.Location = new System.Drawing.Point(15, 426);
-            this.btnFilterShow.Name = "btnFilterShow";
-            this.btnFilterShow.Size = new System.Drawing.Size(89, 23);
-            this.btnFilterShow.TabIndex = 15;
-            this.btnFilterShow.Text = "Show filter";
-            this.btnFilterShow.UseVisualStyleBackColor = true;
-            this.btnFilterShow.Click += new System.EventHandler(this.btnFilterShow_Click);
-            // 
-            // btnFilterHide
-            // 
-            this.btnFilterHide.Location = new System.Drawing.Point(205, 426);
-            this.btnFilterHide.Name = "btnFilterHide";
-            this.btnFilterHide.Size = new System.Drawing.Size(89, 23);
-            this.btnFilterHide.TabIndex = 16;
-            this.btnFilterHide.Text = "Hide filter";
-            this.btnFilterHide.UseVisualStyleBackColor = true;
+            this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
+            this.tbFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbFilter_KeyDown);
+            this.tbFilter.Enter += new System.EventHandler(this.tbFilter_Enter);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(307, 460);
-            this.Controls.Add(this.btnFilterHide);
-            this.Controls.Add(this.btnFilterShow);
+            this.ClientSize = new System.Drawing.Size(307, 428);
             this.Controls.Add(this.tbFilter);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnClearAll);
             this.Controls.Add(this.btnSelectAll);
             this.Controls.Add(this.checkedListBox1);
-            this.Controls.Add(this.cbSigName);
+            this.Controls.Add(this.cbFileName);
             this.Controls.Add(this.cbTime);
             this.Controls.Add(this.cbDate);
             this.Controls.Add(this.menuStrip1);
@@ -222,15 +218,13 @@
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.CheckBox cbDate;
         private System.Windows.Forms.CheckBox cbTime;
-        private System.Windows.Forms.CheckBox cbSigName;
+        private System.Windows.Forms.CheckBox cbFileName;
         private System.Windows.Forms.CheckedListBox checkedListBox1;
         private System.Windows.Forms.Button btnSelectAll;
         private System.Windows.Forms.Button btnClearAll;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbFilter;
-        private System.Windows.Forms.Button btnFilterShow;
-        private System.Windows.Forms.Button btnFilterHide;
     }
 }
 

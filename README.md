@@ -1,15 +1,13 @@
-# CrestronToolboxLogParser
-C# program that reads in a Crestron Toolbox SIMPL Debugger Log file and filters the results.
+# CrestronLogParser
+C# program that reads in a Crestron Log file and filters the results.
 
 ## Synopsis
 
-This program will read a Crestron Toolbox SIMPL Debugger log file and display it, you will also have the option to hide signals, the timestamp and other unwanted info.
+This program will read a Crestron log file and display it, you will also have the option to hide the timestamp and other unwanted info.
 
 ## Motivation
 
-This was originally created to help my own module to parse a Cisco SX-80 codec addressbook by taking a log of a conversation between a Cisco SX-80 and the bug ridden Crestron module for it.
-
-I needed to look at a log file and hide all of the signals that I don't care about.
+This was originally created to filter a log file to only show user generated entries created by a SIMPL program using "User event logger" symbols.
 
 ## Installation
 
@@ -17,11 +15,12 @@ No installation required.
 
 ## Usage
 
-When debugging a Crestron system with SIMPL Debugger select "Logging" > "Save Current". The default log location is "~\Documents\Crestron\Toolbox\SIMPL Debugger Logs".
+Download the log files from a Crestron processor using Toolbox or the Information Tool.
+Open the *.log file using this program.
+An example log file you can use to parse is in the root folder "Crestron_00.log"
+To only see user generated entries then type "USER SPECIFIED" (without the double quotes) in the filter section and press enter.
 
-Open the saved file and you will see the contents, then de-select any signals you don't want to see. 
-
-
+Click on the check boxes to filter out other items.
 ## API Reference
 
 The code is the current documentation, feel free to create some and submit a pull request. 
@@ -32,7 +31,7 @@ Tests are not implemented, feel free to make some.
 
 ## Contributors
 
-Rod Driscoll: rdriscoll@avplus.net.au
+Rod Driscoll: rodney.driscoll@thecigroup.com.au
 
 ## License
 
